@@ -17,7 +17,7 @@ units: config/samples.csv
 # https://github.com/PacificBiosciences/pbbioconda
 ##################################################
 
-pbccs:
+ccs:
     min_accuracy: 0.99          # Minimum predicted accuracy in [0, 1]. [0.99]
 
 ##############################
@@ -27,5 +27,4 @@ pbccs:
 map_to_genome: TRUE # switch to FALSE if you want to avoid genome mapping
 
 # Genome reference
-genome_fasta_ref: "config/refs/S_lycopersicum_chromosomes.4.00.chrom1.fa" 
-  gtf:     "config/refs/ITAG4.0_gene_models.sub.gtf" 
+genome_fasta_ref: "Stuberosum_686_v6.1_chr01.fa" 
