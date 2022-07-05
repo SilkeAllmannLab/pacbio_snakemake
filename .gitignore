@@ -3,3 +3,6 @@ resources/**
 logs/**
 .snakemake
 .snakemake/**
+workflow/.DS_Store
+config/.DS_Store
+config/subreads/

@@ -1,0 +1,31 @@
+---
+
+#############
+# DIRECTORIES
+##############
+result_dir:  results/        # should be kept
+working_dir: temp/           # can be removed (temporary files)
+keep_working_dir: TRUE # if TRUE then 'working_dir' is kept at the completion of the pipeline. if FALSE, it is deleted. 
+
+########################################
+# SAMPLE NAMES TO PACBIO SUBREADS FILES
+########################################
+units: config/samples.csv
+
+##################################################
+# PACBIO BIOCONDA SUITE
+# https://github.com/PacificBiosciences/pbbioconda
+##################################################
+
+pbccs:
+    min_accuracy: 0.99          # Minimum predicted accuracy in [0, 1]. [0.99]
+
+##############################
+# GENOME MAPPING WITH MINIMAP2
+##############################
+
+map_to_genome: TRUE # switch to FALSE if you want to avoid genome mapping
+
+# Genome reference
+genome_fasta_ref: "config/refs/S_lycopersicum_chromosomes.4.00.chrom1.fa" 
+  gtf:     "config/refs/ITAG4.0_gene_models.sub.gtf" 

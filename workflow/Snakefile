@@ -2,3 +2,68 @@
 # Please follow the best practices: 
 # https://snakemake.readthedocs.io/en/stable/snakefiles/best_practices.html,
 # in particular regarding the standardized folder structure mentioned there. 
+
+from snakemake.utils import min_version
+
+##### set minimum snakemake version #####
+min_version("6.4.1")
+import os
+import pandas as pd
+
+#########################
+# IMPORT USEFUL FUNCTIONS
+#########################
+
+include: "rules/common.py "
+
+#################
+# PIPELINE CONFIG
+#################
+
+configfile: "config/config.yaml"
+
+#########
+# SAMPLES
+#########
+
+samples_df = sample_csv_to_pandas_df(path_to_sample_csv_file=config["samples"])
+SAMPLES = samples_df["sample"].tolist()
+
+##############
+# TARGET RULES
+##############
+
+CCS = expand(config["working_dir"] + "ccs/{sample}.css.bam", sample=SAMPLES)
+
+rule all:
+    input:
+        CSS
+    message:
+        "PacBio IsoSeq Snakemake pipeline successfully run."
+        
+#######
+# RULES
+#######
+
+rule generate_circular_consensus_reads:
+    input:
+        subreads = get_subread_file
+    output:
+        css = config["working_dir/"] + "css/{sample}.css.bam"
+    message:
+        "Generating Circular Consensus Reads for {wildcards.sample} from raw IsoSeq subreads"
+    params:
+        min_accuracy: config["ccs"]["min_accuracy"],
+        report_file: config["working_dir"] + "css/{sample}.css_report_txt"
+    threads: 10
+    conda:
+        "envs/pbccs.yaml"
+    shell:
+        "ccs "
+        "--min-rq {params.min_accuracy} "
+        "--report-file {params.report_file} "
+        "{input.subreads} {output.css}"
+
+
+
+        
