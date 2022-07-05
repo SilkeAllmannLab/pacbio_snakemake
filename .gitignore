@@ -6,3 +6,5 @@ logs/**
 workflow/.DS_Store
 config/.DS_Store
 config/subreads/
+config/refs/
+.DS_Store
