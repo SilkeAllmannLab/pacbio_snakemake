@@ -53,8 +53,8 @@ rule generate_circular_consensus_reads:
     message:
         "Generating Circular Consensus Reads for {wildcards.sample} from raw IsoSeq subreads"
     params:
-        min_accuracy: config["ccs"]["min_accuracy"],
-        report_file: config["working_dir"] + "css/{sample}.css_report_txt"
+        min_accuracy = config["ccs"]["min_accuracy"],
+        report_file  = config["working_dir"] + "css/{sample}.css_report_txt"
     threads: 10
     conda:
         "envs/pbccs.yaml"
