@@ -8,3 +8,4 @@ config/.DS_Store
 config/subreads/
 config/refs/
 .DS_Store
+workflow/rules/__pycache__/
