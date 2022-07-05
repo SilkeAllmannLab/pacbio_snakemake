@@ -1,0 +1,7 @@
+name: isoseq
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - isoseq3 = 3.2.0
