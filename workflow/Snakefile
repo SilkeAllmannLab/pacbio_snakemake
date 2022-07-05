@@ -29,7 +29,7 @@ configfile: "config/config.yaml"
 #########
 
 samples_df = sample_csv_to_pandas_df(path_to_sample_csv_file=config["samples"])
-SAMPLES = samples_df["sample"].tolist()
+SAMPLES = samples_df.index.values.tolist()
 
 ##############
 # TARGET RULES
@@ -39,7 +39,7 @@ CCS = expand(config["working_dir"] + "ccs/{sample}.css.bam", sample=SAMPLES)
 
 rule all:
     input:
-        CSS
+        CCS
     message:
         "PacBio IsoSeq Snakemake pipeline successfully run."
         
