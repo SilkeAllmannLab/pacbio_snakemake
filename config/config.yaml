@@ -10,7 +10,7 @@ keep_working_dir: TRUE # if TRUE then 'working_dir' is kept at the completion of
 ########################################
 # SAMPLE NAMES TO PACBIO SUBREADS FILES
 ########################################
-units: config/samples.csv
+samples: config/samples.csv
 
 ##################################################
 # PACBIO BIOCONDA SUITE
