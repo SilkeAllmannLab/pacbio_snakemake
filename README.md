@@ -10,9 +10,8 @@ Optionnally, long assembled mRNAs can be aligned against a genomic reference to 
 
 ## Usage
 
-The usage of this workflow is described in the [Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog/?usage=<SilkeAllmaanLab>%2F<pacbio_snakemake>).  
+The usage of this workflow is described in the [Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog/?usage=%3CSilkeAllmaanLab%3E%2F%3Cpacbio_snakemake%3E).
 
-https://snakemake.github.io/snakemake-workflow-catalog/?rules=true#
 
 If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this (original) repository and its DOI (see above).
 
