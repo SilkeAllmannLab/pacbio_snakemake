@@ -1,0 +1,9 @@
+name: snakemake
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - pandas = 1.4.3
+  - snakemake = 7.0.1
+  - biopython =  1.79

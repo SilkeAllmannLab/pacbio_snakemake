@@ -31,6 +31,12 @@ from common import sample_csv_to_pandas_df
 samples_df = sample_csv_to_pandas_df(path_to_sample_csv_file=config["samples"])
 SAMPLES = samples_df.index.values.tolist()
 
+##########
+# BARCODES
+##########
+
+from common import verify_primer_names
+
 #####################
 # MAIN INPUT FUNCTION
 #####################
