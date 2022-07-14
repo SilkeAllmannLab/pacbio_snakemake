@@ -44,11 +44,12 @@ def get_subread_file(wildcards):
 ##############
 
 CCS = expand(config["working_dir"] + "01_css/{sample}.css.bam", sample=SAMPLES)
-FLNC = expand(config["working_dir"] + "02_flnc/{sample}.flnc.bam", sample=SAMPLES)
+FL = expand(config["working_dir"] + "02_fl/{sample}.fl.bam", sample=SAMPLES)
+FLNC = expand(config["working_dir"] + "03_flnc/{sample}.flnc.bam", sample=SAMPLES)
 
 rule all:
     input:
-        CCS, FLNC
+        FLNC
     message:
         "PacBio IsoSeq Snakemake pipeline successfully run."
         
@@ -76,18 +77,18 @@ rule generate_circular_consensus_reads:
         "--num-threads {threads} "   
         "{input.subreads} {output.css}"
 
-rule generate_full_length_non_chimeric_reads:
+rule generate_full_length_reads:
     input:
         css = config["working_dir"] + "01_css/{sample}.css.bam"
     output:
-        flnc = config["working_dir"] + "02_flnc/{sample}.flnc.bam"
+        fl = config["working_dir"] + "02_fl/{sample}.fl.bam"
     message:
-        "Generating Full Length Non Chimeric (flnc) reads for {wildcards.sample} from CSS reads"
+        "Generating Full Length (FL) reads for {wildcards.sample} from CSS reads"
     conda:
         "envs/lima.yaml"
     params:
         barcodes = config["lima"]["barcodes"], # fasta file with adapters (primers + eventual barcodes)
-        report_file  = config["working_dir"] + "02_flnc/{sample}.lima_report_txt"
+        report_file  = config["working_dir"] + "02_fl/{sample}.lima_report_txt"
     threads: 20
     shell:
         "lima "
@@ -98,4 +99,24 @@ rule generate_full_length_non_chimeric_reads:
         "{input} "
         "{params.barcodes} "
         "{output}"
+        
+rule generate_full_length_non_chimeric_reads:
+    input:
+        fl = config["working_dir"] + "02_fl/{sample}.fl.bam"
+    output:
+        flnc = config["working_dir"] + "03_flnc/{sample}.flnc.bam"
+    message:
+        "Remove polyA and concatemers from full length (FL) reads to generate full length non chimeric reads (FLNC) for {wildcards.sample}"
+    params:
+        barcodes = config["lima"]["barcodes"], # fasta file with adapters (primers + eventual barcodes)
+    conda: 
+        "envs/isoseq3.yaml"
+    threads: 20
+    shell:
+        "isoseq3 refine "
+        "--require-polya "
+        "--num-threads {threads} "
+        "{input} "
+        "{params.barcodes} "
+        "{output} "
         
