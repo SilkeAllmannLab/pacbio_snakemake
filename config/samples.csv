@@ -1,3 +1,3 @@
 ﻿sample,pacbio
-Desiree,Desiree.subreads.subsampled_five_percent.bam
-S869,S_869.subreads.subsampled_five_percent.bam
+Desiree,config/subreads/Desiree.subreads.subsampled_one_percent.bam
+S869,config/subreads/S_869.subreads.subsampled_one_percent.bam

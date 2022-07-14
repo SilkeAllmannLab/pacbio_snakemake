@@ -12,13 +12,27 @@ keep_working_dir: TRUE # if TRUE then 'working_dir' is kept at the completion of
 ########################################
 samples: config/samples.csv
 
+
 ##################################################
 # PACBIO BIOCONDA SUITE
 # https://github.com/PacificBiosciences/pbbioconda
 ##################################################
 
+# Step 1: call Circular Consensus Reads (CSS) 
 ccs:
     min_accuracy: 0.99          # Minimum predicted accuracy in [0, 1]. [0.99]
+
+# Step 2: identify barcode and primer sequences
+lima: 
+    # adapters consist of forward/reverse primers and eventual barcodes (if samples are multiplexed)
+    # nicknamed barcodes for simplicity and coherence with the lima tool options
+    # See https://lima.how/ 
+    # See also https://lima.how/barcode-design.html
+    barcodes: config/barcodes.fasta 
+
+
+
+
 
 ##############################
 # GENOME MAPPING WITH MINIMAP2

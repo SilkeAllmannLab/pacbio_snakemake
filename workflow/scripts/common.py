@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from importlib.resources import path
 import os
 import pandas as pd
 
@@ -23,6 +24,3 @@ def sample_csv_to_pandas_df(path_to_sample_csv_file):
     
     return sample_df
 
-def get_subread_file(wildcards):
-    subread_bam_file = sample_df.loc[(wildcards.sample), "pacbio"]
-    return subread_bam_file

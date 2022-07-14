@@ -10,13 +10,7 @@ min_version("6.7.0")
 import os
 import pandas as pd
 import sys
-
-#########################
-# IMPORT USEFUL FUNCTIONS
-#########################
-
-sys.path.append("workflow/rules/")
-from common import sample_csv_to_pandas_df, get_subread_file
+sys.path.append("workflow/scripts/")
 
 #################
 # PIPELINE CONFIG
@@ -24,22 +18,37 @@ from common import sample_csv_to_pandas_df, get_subread_file
 
 configfile: "config/config.yaml"
 
+
+#########################
+# IMPORT USEFUL FUNCTIONS
+#########################
+
 #########
 # SAMPLES
 #########
+from common import sample_csv_to_pandas_df
 
 samples_df = sample_csv_to_pandas_df(path_to_sample_csv_file=config["samples"])
 SAMPLES = samples_df.index.values.tolist()
+
+#####################
+# MAIN INPUT FUNCTION
+#####################
+
+def get_subread_file(wildcards):
+    subread_bam_file = samples_df.loc[(wildcards.sample), "pacbio"]  
+    return subread_bam_file
 
 ##############
 # TARGET RULES
 ##############
 
-CCS = expand(config["working_dir"] + "ccs/{sample}.css.bam", sample=SAMPLES)
+CCS = expand(config["working_dir"] + "01_css/{sample}.css.bam", sample=SAMPLES)
+FLNC = expand(config["working_dir"] + "02_flnc/{sample}.flnc.bam", sample=SAMPLES)
 
 rule all:
     input:
-        CCS
+        CCS, FLNC
     message:
         "PacBio IsoSeq Snakemake pipeline successfully run."
         
@@ -51,21 +60,42 @@ rule generate_circular_consensus_reads:
     input:
         subreads = get_subread_file
     output:
-        css = config["working_dir/"] + "css/{sample}.css.bam"
+        css = config["working_dir"] + "01_css/{sample}.css.bam"
     message:
-        "Generating Circular Consensus Reads for {wildcards.sample} from raw IsoSeq subreads"
+        "Generating Circular Consensus (CSS) Reads for {wildcards.sample} from raw IsoSeq subreads"
     params:
         min_accuracy = config["ccs"]["min_accuracy"],
-        report_file  = config["working_dir"] + "css/{sample}.css_report_txt"
-    threads: 10
+        report_file  = config["working_dir"] + "01_css/{sample}.css_report_txt"
+    threads: 20
     conda:
         "envs/pbccs.yaml"
     shell:
         "ccs "
-        "--min-rq {params.min_accuracy} "
+        "--min-rq {params.min_accuracy} "       # minimum predicted accuracy 
         "--report-file {params.report_file} "
+        "--num-threads {threads} "   
         "{input.subreads} {output.css}"
 
-
-
+rule generate_full_length_non_chimeric_reads:
+    input:
+        css = config["working_dir"] + "01_css/{sample}.css.bam"
+    output:
+        flnc = config["working_dir"] + "02_flnc/{sample}.flnc.bam"
+    message:
+        "Generating Full Length Non Chimeric (flnc) reads for {wildcards.sample} from CSS reads"
+    conda:
+        "envs/lima.yaml"
+    params:
+        barcodes = config["lima"]["barcodes"], # fasta file with adapters (primers + eventual barcodes)
+        report_file  = config["working_dir"] + "02_flnc/{sample}.lima_report_txt"
+    threads: 20
+    shell:
+        "lima "
+        "--isoseq "
+        "--peek-guess "                # remove spurious false positive
+        "--num-threads {threads} "
+        "--log-file  {params.report_file} "
+        "{input} "
+        "{params.barcodes} "
+        "{output}"
         

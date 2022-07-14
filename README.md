@@ -7,6 +7,13 @@
 A Snakemake workflow for processing PacBio raw `subreads.bam` into polished mRNA isoforms in FASTA format.  
 Optionnally, long assembled mRNAs can be aligned against a genomic reference to generate a genomic annotation in the GFF3 format. 
 
+## Steps
+The workflow follows Iso-Seq standard analysis that consists of the following steps:  
+1. **Circular Consensus Sequence (CCS) reads** call: aligning subreads to each other from a single Zero-mode Waveguide (ZMW).     
+2. **Full Length Non Chimeric (FLNC) reads** call: identify flnc CSS reads with a polyA tail and 5'/3' primers. Removes polyA tail and primers.   
+3. **Refine FLNC reads**: 
+4. **Cluster FLNC reads**
+
 
 ## Usage
 
@@ -27,7 +34,8 @@ If you use this workflow in a paper, don't forget to give credits to the authors
 
 ## PacBio Iso-Seq workflow
 
-[UC Davis Bioinformatics Core Iso-Seq workflow](https://ucdavis-bioinformatics-training.github.io/2020-september-isoseq/liz/bioconda/2-bioconda)
+- [A nice Iso-Seq tutorial to follow](https://databeauty.com/blog/tutorial/2020/12/08/PacBio-Iso-Seq-Data-Analysis.html)
+- [UC Davis Bioinformatics Core Iso-Seq workflow](https://ucdavis-bioinformatics-training.github.io/2020-september-isoseq/liz/bioconda/2-bioconda)
 
 # TODO
 
