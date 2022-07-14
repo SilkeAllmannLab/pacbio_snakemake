@@ -15,11 +15,23 @@ The workflow follows Iso-Seq standard analysis that consists of the following st
 4. **Cluster FLNC reads**
 
 
-## Usage
+# Usage
 
 The usage of this workflow is described in the [Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog?usage=SilkeAllmannLab/pacbio_snakemake).  
 
 If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this (original) repository and its DOI (see above).
+
+## Install conda and mamba
+
+For each rule, a dedicated Conda/Mamba environment 
+On the crunchomics cluster, 
+
+To install the 'conda' package manager from the lightweight miniconda distribution, follow instructions [here](https://docs.conda.io/en/latest/miniconda.html). 
+To install the `mamba` package manager, follow the instructions [here](https://mamba.readthedocs.io/en/latest/installation.html).
+
+## Run Snakemake with conda
+
+Using 
 
 # Pipeline maintainers
 
