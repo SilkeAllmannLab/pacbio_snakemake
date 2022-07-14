@@ -81,7 +81,7 @@ rule generate_full_length_reads:
     input:
         css = config["working_dir"] + "01_css/{sample}.css.bam"
     output:
-        fl = config["working_dir"] + "02_fl/{sample}.fl.isoseq_5p--isoseq_3p.bam" 
+        fl = config["working_dir"] + "02_fl/{sample}.fl.isoseq_5p--isoseq_3p.isoseq_5p--isoseq_3p.bam" 
     message:
         "Generating Full Length (FL) reads for {wildcards.sample} from CSS reads"
     conda:
@@ -102,7 +102,7 @@ rule generate_full_length_reads:
         
 rule generate_full_length_non_chimeric_reads:
     input:
-        fl = config["working_dir"] + "02_fl/{sample}.fl.isoseq_5p--isoseq_3p.bam" 
+        fl = config["working_dir"] + "02_fl/{sample}.fl.isoseq_5p--isoseq_3p.isoseq_5p--isoseq_3p.bam" 
     output:
         flnc = config["working_dir"] + "03_flnc/{sample}.flnc.bam"
     message:
