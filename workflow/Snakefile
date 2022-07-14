@@ -88,8 +88,7 @@ rule generate_full_length_reads:
         "envs/lima.yaml"
     params:
         barcodes = config["lima"]["barcodes"], # fasta file with adapters (primers + eventual barcodes)
-        report_file  = config["working_dir"] + "02_fl/{sample}.lima_report_txt",
-        output_file_name = "02_fl/{sample}.fl"
+        report_file  = config["working_dir"] + "02_fl/{sample}.lima_report_txt"
     threads: 20
     shell:
         "lima "
@@ -100,8 +99,7 @@ rule generate_full_length_reads:
         "--split-named "
         "{input} "
         "{params.barcodes} "
-        "{output_file_name};
-        "mv {output} {params.outfile_prefix} output"
+        "{output}"
         
 rule generate_full_length_non_chimeric_reads:
     input:
