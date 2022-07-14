@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from importlib.resources import path
 import os
 import pandas as pd
 
