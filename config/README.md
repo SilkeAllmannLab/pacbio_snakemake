@@ -23,6 +23,15 @@ After Circular Consensus Sequence (CSS) calling, full-length reads have to be de
 
 The sequences of the 5' and 3' primers in FASTA format has to be available in `config/barcodes.fasta`.
 
+⚠️ Primers have to be named `isoseq_5p` and `isoseq_3p` ⚠️  
+Below is an example of the expected `barcodes.fasta` file.  
+```
+>isoseq_5p
+GGCAATGAAGTCGCAGGGTTG
+>isoseq_3p
+GAAGCAGTGGTATCAACGCAGAG
+```
+
 ## Genomic refs: `refs/`
 
 An option is available to align the assembled mRNA isoforms to a genomic reference. If that option is turned "on" (in the `config.yaml` file), a genome reference assembly in FASTA format has to be present in `config/refs/`.  
