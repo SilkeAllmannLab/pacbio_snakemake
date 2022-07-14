@@ -81,14 +81,15 @@ rule generate_full_length_reads:
     input:
         css = config["working_dir"] + "01_css/{sample}.css.bam"
     output:
-        fl = config["working_dir"] + "02_fl/{sample}.fl.bam" 
+        fl = config["working_dir"] + "02_fl/{sample}.fl.isoseq_5p--isoseq_3p.bam" 
     message:
         "Generating Full Length (FL) reads for {wildcards.sample} from CSS reads"
     conda:
         "envs/lima.yaml"
     params:
         barcodes = config["lima"]["barcodes"], # fasta file with adapters (primers + eventual barcodes)
-        report_file  = config["working_dir"] + "02_fl/{sample}.lima_report_txt"
+        report_file  = config["working_dir"] + "02_fl/{sample}.lima_report_txt",
+        temp_filename = config["working_dir"] + "02_fl/{sample}.fl.bam" # only use for lima (renamed after job)
     threads: 20
     shell:
         "lima "
@@ -99,11 +100,11 @@ rule generate_full_length_reads:
         "--split-named "
         "{input} "
         "{params.barcodes} "
-        "{output}"
+        "{params.temp_filename}"
         
 rule generate_full_length_non_chimeric_reads:
     input:
-        fl = config["working_dir"] + "02_fl/{sample}.fl.bam"  
+        fl = config["working_dir"] + "02_fl/{sample}.fl.isoseq_5p--isoseq_3p.bam"
     output:
         flnc = config["working_dir"] + "03_flnc/{sample}.flnc.bam"
     message:
