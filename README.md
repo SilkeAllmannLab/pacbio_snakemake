@@ -29,9 +29,30 @@ On the crunchomics cluster,
 To install the 'conda' package manager from the lightweight miniconda distribution, follow instructions [here](https://docs.conda.io/en/latest/miniconda.html). 
 To install the `mamba` package manager, follow the instructions [here](https://mamba.readthedocs.io/en/latest/installation.html).
 
+## Create a ''snakemake' environment
+
+This will be your starting environment with:
+- [Snakemake](https://snakemake.readthedocs.io/en/stable/index.html) version 7.0.1
+- [Pandas](https://pandas.pydata.org/) version 1.4.3.
+- [Biopython](https://biopython.org/) version 1.79.
+
+To create it, run `mamba env create -f config/environment.yaml` to install these three Python dependencies. 
+
 ## Run Snakemake with conda
 
-Using 
+Snakemake will use the rule conda environments defined in `envs/` for each given rule. It will install the conda environment using `mamba` so be sure `mamba` is available by running either `which mamba`. 
+
+If using Snakemake interactively execute: `snakemake --use-conda -j X` where X is your number of cores.   
+Otherwise submit your jobs using SLURM job manager: `sbatch pacbio_snakemake_sbatch.sh`.
+
+# PacBio Iso-Seq terminology
+
+| name                              	| abbreviation 	| explanation                                                                                    	|
+|-----------------------------------	|--------------	|------------------------------------------------------------------------------------------------	|
+| Full-Length Reads                 	| FL reads     	| CCS reads with 5’ and 3’ cDNA primers removed.                                                 	|
+| Full-Length, Non-Concatemer Reads 	| FLNC reads   	| Reads FLNC Reads CCS reads with 5’ and 3’ cDNA primers, polyA tail, and   concatemers removed. 	|
+| High-Quality Isoforms             	| HQ isoforms  	| Polished transcript sequences with predicted accuracy ≥99% & ≥2 FLNC                           	|
+| Low-Quality Isoforms              	| LQ isoforms  	| Polished transcript sequences with predicted accuracy <99% & ≥2   FLNC                         	|
 
 # Pipeline maintainers
 
