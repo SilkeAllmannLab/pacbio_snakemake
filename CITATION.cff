@@ -1,0 +1,42 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: PacBio Iso-Seq Snakemake processing pipeline
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: 'marc '
+    email: m.galland@uva.nl
+    affiliation: University of Amsterdam
+    family-names: galland
+    orcid: 'https://orcid.org/0000-0003-2161-8689'
+  - given-names: tijs
+    family-names: bliek
+    affiliation: University of Amsterdam
+    email: m.bliek@uva.nl
+    orcid: 'https://orcid.org/0000-0002-0488-4873'
+identifiers:
+  - type: url
+    value: >-
+      https://github.com/SilkeAllmannLab/pacbio_snakemake
+    description: 'GitHub repository '
+repository-code: 'https://github.com/SilkeAllmannLab/pacbio_snakemake'
+abstract: >-
+  A Snakemake pipeline to go from raw .subreads.bam
+  PacBio Iso-Seq to assembled mRNA isoforms (FASTA
+  format). 
+
+  Optionally, the pipeline can also align the
+  assembled mRNA isoforms to a genomic reference to
+  generate a genome annotation in GFF format. 
+keywords:
+  - snakemake
+  - pacbio
+  - iso-seq
+  - long read sequencing
+  - pipeline
+  - bioinformatics
+license: BSD-3-Clause-Clear

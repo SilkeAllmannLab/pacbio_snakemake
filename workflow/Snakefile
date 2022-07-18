@@ -52,10 +52,11 @@ def get_subread_file(wildcards):
 CCS = expand(config["working_dir"] + "01_css/{sample}.css.bam", sample=SAMPLES)
 FL = expand(config["working_dir"] + "02_fl/{sample}.fl.bam", sample=SAMPLES)
 FLNC = expand(config["working_dir"] + "03_flnc/{sample}.flnc.bam", sample=SAMPLES)
+TRANSCRIPTS = expand(config["working_dir"] + "04_transcripts/{sample}.transcripts.bam", sample=SAMPLES)
 
 rule all:
     input:
-        FLNC
+        TRANSCRIPTS
     message:
         "PacBio IsoSeq Snakemake pipeline successfully run."
         
@@ -95,7 +96,7 @@ rule generate_full_length_reads:
     params:
         barcodes = config["lima"]["barcodes"], # fasta file with adapters (primers + eventual barcodes)
         report_file  = config["working_dir"] + "02_fl/{sample}.lima_report_txt",
-        temp_filename = config["working_dir"] + "02_fl/{sample}.fl.bam" # only use for lima (renamed after job)
+        temp_filename = config["working_dir"] + "02_fl/{sample}.fl.bam" # only used for lima to work (renamed after job)
     threads: 20
     shell:
         "lima "
@@ -117,6 +118,7 @@ rule generate_full_length_non_chimeric_reads:
         "Remove polyA and concatemers from full length (FL) reads to generate full length non chimeric reads (FLNC) for {wildcards.sample}"
     params:
         barcodes = config["lima"]["barcodes"], # fasta file with adapters (primers + eventual barcodes)
+        report_file  = config["working_dir"] + "03_flnc/{sample}.isoseq_refine_report_txt"
     conda: 
         "envs/isoseq3.yaml"
     threads: 20
@@ -124,7 +126,28 @@ rule generate_full_length_non_chimeric_reads:
         "isoseq3 refine "
         "--require-polya "
         "--num-threads {threads} "
+        " --log-file {params.report_file} "
         "{input} "
         "{params.barcodes} "
         "{output} "
-        
+
+rule generate_transcripts_isoforms_using_isoseq:
+    input:
+        flnc = config["working_dir"] + "03_flnc/{sample}.flnc.bam"
+    output:
+        refined_reads = config["working_dir"] + "04_transcripts/{sample}.transcripts.bam"
+    message:
+        "Cluster and generate transcript isoforms for {wildcards.sample} using isoseq3"
+    params:
+        report_file  = config["working_dir"] + "04_transcripts/{sample}.isoseq_cluster_report_txt"
+    threads: 20
+    shell:
+        "isoseq3 cluster "
+        "--num-threads {threads} "
+        " --log-file {params.report_file} "
+        "--verbose "
+        "{input} "
+        "{output} "
+
+# pbmm2 align transcripts.bam reference.fasta aligned.sorted.bam --preset ISOSEQ --sort
+# isoseq3 collapse aligned.sorted.bam out.gff
