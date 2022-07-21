@@ -104,7 +104,6 @@ rule generate_full_length_reads:
         "--peek-guess "                     # remove spurious false positive
         "--num-threads {threads} "
         "--log-file  {params.report_file} " # Split output by resolved barcode pair name.
-        "--split-named "
         "{input} "
         "{params.barcodes} "
         "{params.temp_filename}"
@@ -140,6 +139,8 @@ rule generate_transcripts_isoforms_using_isoseq:
         "Cluster and generate transcript isoforms for {wildcards.sample} using isoseq3"
     params:
         report_file  = config["working_dir"] + "04_transcripts/{sample}.isoseq_cluster_report_txt"
+    conda: 
+        "envs/isoseq3.yaml"
     threads: 20
     shell:
         "isoseq3 cluster "
