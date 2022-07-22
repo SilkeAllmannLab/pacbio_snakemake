@@ -49,17 +49,18 @@ def get_subread_file(wildcards):
 # TARGET RULES
 ##############
 
-CCS = expand(config["working_dir"] + "01_css/{sample}.css.bam", sample=SAMPLES)
-FL = expand(config["working_dir"] + "02_fl/{sample}.fl.bam", sample=SAMPLES)
-FLNC = expand(config["working_dir"] + "03_flnc/{sample}.flnc.bam", sample=SAMPLES)
-TRANSCRIPTS = expand(config["working_dir"] + "04_transcripts/{sample}.transcripts.bam", sample=SAMPLES)
-BAMS = expand(config["working_dir"] + "05_minimap/{sample}.aligned.sorted.bam", sample=SAMPLES)
-GFFS = expand(config["working_dir"] + "06_gff/{sample}.collapsed.gff", sample=SAMPLES)
+# with a reference genome, export both annotation (GTF) and collapsed mRNA isoforms
+GTFs = expand(config["result_dir"] + "{sample}.collapsed.gtf", sample=SAMPLES)
+FASTAs = expand(config["result_dir"] + "{sample}.collapsed.fasta", sample=SAMPLES)
+
+# without a genome reference
+# only exports uncollapsed transcripts in FASTA format 
+TRANSCRIPTS = expand(config["result_dir"] + "{sample}.transcripts.fasta", sample=SAMPLES)
 
 if config["genome"]["map_to_genome"] == True:
     rule all:
         input:
-            TRANSCRIPTS, BAMS, GFFS
+            GTFs, FASTAs
         message:
             "PacBio IsoSeq Snakemake pipeline successfully run (with genome alignment 'on')."
 elif config["genome"]["map_to_genome"] == False:
@@ -75,6 +76,9 @@ else:
 # RULES
 #######
 
+############## 
+# COMMON RULES
+##############
 rule generate_circular_consensus_reads:
     input:
         subreads = get_subread_file
@@ -161,7 +165,23 @@ rule generate_transcripts_isoforms_using_isoseq:
         "{input} "
         "{output} "
 
-if config["genome"]["map_to_genome"]:
+################################## 
+# RULES DEPENDENT ON GENOME OPTION
+##################################
+if config["genome"]["map_to_genome"] == False:
+    rule export_transcripts_to_fasta:
+        input: 
+            transcripts_bam = config["working_dir"] + "04_transcripts/{sample}.transcripts.bam" 
+        output:
+            transcripts_fasta = config["result_dir"] + "{sample}.transcripts.fasta"
+        message:
+            "Exporting {wildcards.sample} transcripts in the {output} file"
+        conda:
+            "envs/samtools.yaml"
+        shell:
+            "samtools fasta -o {output} {input}"  
+
+if config["genome"]["map_to_genome"] == True:
     rule generate_genome_index:
         input:
             config["genome"]["genome_fasta_ref"]
@@ -204,9 +224,10 @@ if config["genome"]["map_to_genome"]:
             aln = config["working_dir"] + "05_minimap/{sample}.aligned.sorted.bam",
             css = config["working_dir"] + "01_css/{sample}.css.bam"
         output:
-            gff = config["working_dir"] + "06_gff/{sample}.collapsed.gff"
+            gff = config["working_dir"] + "06_gff/{sample}.collapsed.gff",
+            fasta = config["result_dir"] + "{sample}.collapsed.fasta"  
         message:
-            "Collapose mRNA isoforms of {wildcards.sample}"
+            "Collapse mRNA isoforms of {wildcards.sample} and outputs a GFF and FASTA file"
         conda:
             "envs/isoseq3.yaml"
         params:
@@ -221,3 +242,19 @@ if config["genome"]["map_to_genome"]:
             "{input.aln} "
             "{input.css} "
             "{output}"
+    
+    rule convert_gff_to_gff:
+        input:
+            gff = config["working_dir"] + "06_gff/{sample}.collapsed.gff",
+        output:
+            gtf = config["result_dir"] + "{sample}.collapsed.gtf"
+        message:
+            "Convert {wildcards.sample} GFF annotation to GTF"
+        conda:
+            "envs/cufflinks.yaml"
+        shell:
+            "gffread {input} -T -o {output}"
+
+        
+             
+
