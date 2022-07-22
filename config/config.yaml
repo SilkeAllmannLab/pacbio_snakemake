@@ -32,7 +32,12 @@ lima:
 
 isoseq3:
     cluster:
-        min_subreads: 10 # Subread threshold for HQ/LQ split (high/low quality transcript isoforms). 
+        min_subreads: 10         # Subread threshold for HQ/LQ split (high/low quality transcript isoforms).
+    collapse:
+        min_aln_coverage: 0.99   # Ignore alignments with less than minimum query read coverage Default [0.99]
+        min_aln_identity: 0.95   # Ignore alignments with less than minimum alignment identity. Default [0.95] 
+        max_fuzzy_junction: 5    # Ignore mismatches or indels shorter than or equal to N.
+
 
 
 
@@ -41,8 +46,9 @@ isoseq3:
 ##############################
 
 genome:
-    map_to_genome: True                               # 'True' or 'False' switch to FALSE if you want to avoid genome mapping
-    genome_fasta_ref: "Stuberosum_686_v6.1_chr01.fa"  # Genome reference in FASTA format
+    map_to_genome: True                                           # 'True' or 'False' switch to FALSE if you want to avoid genome mapping
+    genome_fasta_ref: "config/refs/Stuberosum_686_v6.1_chr01.fa"  # Genome reference in FASTA format (source Phytozome 13)
+    genome_gff: "config/refs/Stuberosum_686_v6.1.gene.gff3"       # Genome annotation file (source Phytozome 13)
 
 
 

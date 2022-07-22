@@ -53,12 +53,13 @@ CCS = expand(config["working_dir"] + "01_css/{sample}.css.bam", sample=SAMPLES)
 FL = expand(config["working_dir"] + "02_fl/{sample}.fl.bam", sample=SAMPLES)
 FLNC = expand(config["working_dir"] + "03_flnc/{sample}.flnc.bam", sample=SAMPLES)
 TRANSCRIPTS = expand(config["working_dir"] + "04_transcripts/{sample}.transcripts.bam", sample=SAMPLES)
-BAMS = expand(config["result_dir"] + "05_minimap/{sample}.aligned.bam", sample=SAMPLES)
+BAMS = expand(config["working_dir"] + "05_minimap/{sample}.aligned.sorted.bam", sample=SAMPLES)
+GFFS = expand(config["working_dir"] + "06_gff/{sample}.collapsed.gff", sample=SAMPLES)
 
 if config["genome"]["map_to_genome"] == True:
     rule all:
         input:
-            TRANSCRIPTS, BAMS
+            TRANSCRIPTS, BAMS, GFFS
         message:
             "PacBio IsoSeq Snakemake pipeline successfully run (with genome alignment 'on')."
 elif config["genome"]["map_to_genome"] == False:
@@ -183,7 +184,7 @@ if config["genome"]["map_to_genome"]:
             genome_index = config["working_dir"] + "05_minimap/genome.mmi",
             transcripts = config["working_dir"] + "04_transcripts/{sample}.transcripts.bam" 
         output:
-            aln = config["result_dir"] + "05_minimap/{sample}.aligned.bam"
+            aln = config["working_dir"] + "05_minimap/{sample}.aligned.sorted.bam"
         message:
             "Align {wildcards.sample} transcripts to genome reference"
         threads: 20
@@ -198,4 +199,25 @@ if config["genome"]["map_to_genome"]:
             "{input.transcripts} "
             "{output}"
 
-# isoseq3 collapse aligned.sorted.bam out.gff
+    rule collapse_isoforms:
+        input:
+            aln = config["working_dir"] + "05_minimap/{sample}.aligned.sorted.bam",
+            css = config["working_dir"] + "01_css/{sample}.css.bam"
+        output:
+            gff = config["working_dir"] + "06_gff/{sample}.collapsed.gff"
+        message:
+            "Collapose mRNA isoforms of {wildcards.sample}"
+        conda:
+            "envs/isoseq3.yaml"
+        params:
+            min_aln_coverage = config["isoseq3"]["collapse"]["min_aln_coverage"],
+            min_aln_identity = config["isoseq3"]["collapse"]["min_aln_identity"],
+            max_fuzzy_junction = config["isoseq3"]["collapse"]["max_fuzzy_junction"]
+        shell:
+            "isoseq3 collapse "
+            "--min-aln-coverage {params.min_aln_coverage} "
+            "--min-aln-identity {params.min_aln_identity} "
+            "--min-fuzzy-junction {params.max_fuzzy_junction} "
+            "{input.aln} "
+            "{input.css} "
+            "{output}"
