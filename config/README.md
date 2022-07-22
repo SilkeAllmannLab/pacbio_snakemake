@@ -8,6 +8,8 @@ Set the desired parameters in the `config.yaml` file.
 - Parameters for softwares of the PacBio Bioconda suite,
 - Optionally, whether the assembled mRNA reads should be aligned to a genomic reference using Minimap2. Provides opportunity to modify default genome alignment parameters. 
 
+For additional help on PacBio Bioconda tools, please visit the [dedicated website](https://github.com/PacificBiosciences/pbbioconda). 
+
 ## Sample spreadsheet
 
 Add samples to `config/samples.csv`.   
@@ -34,7 +36,9 @@ GAAGCAGTGGTATCAACGCAGAG
 
 ## Genomic refs: `refs/`
 
-An option is available to align the assembled mRNA isoforms to a genomic reference. If that option is turned "on" (in the `config.yaml` file), a genome reference assembly in FASTA format has to be present in `config/refs/`.  
+An option is available to align the assembled mRNA isoforms to a genomic reference.   
+To turn this option "on", verify that the value of the `map_to_genome:` option is set to `TRUE` in the `config.yaml` file.   
+If genome mapping is turned "on", a genome reference assembly in FASTA format has to be present in `config/refs/`.  
 
 
 

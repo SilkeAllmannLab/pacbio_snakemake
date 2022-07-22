@@ -20,7 +20,7 @@ samples: config/samples.csv
 
 # Step 1: call Circular Consensus Reads (CSS) 
 ccs:
-    min_accuracy: 0.99          # Minimum predicted accuracy in [0, 1]. [0.99]
+    min_accuracy: 0.99  # Minimum predicted accuracy in [0, 1]. Default of the program is 0.99
 
 # Step 2: identify barcode and primer sequences
 lima: 
@@ -30,7 +30,9 @@ lima:
     # See also https://lima.how/barcode-design.html
     barcodes: config/barcodes.fasta 
 
-
+isoseq3:
+    cluster:
+        min_subreads: 10 # Subread threshold for HQ/LQ split (high/low quality transcript isoforms). 
 
 
 
@@ -38,7 +40,12 @@ lima:
 # GENOME MAPPING WITH MINIMAP2
 ##############################
 
-map_to_genome: TRUE # switch to FALSE if you want to avoid genome mapping
+genome:
+    map_to_genome: True                               # 'True' or 'False' switch to FALSE if you want to avoid genome mapping
+    genome_fasta_ref: "Stuberosum_686_v6.1_chr01.fa"  # Genome reference in FASTA format
 
-# Genome reference
-genome_fasta_ref: "Stuberosum_686_v6.1_chr01.fa" 
+
+
+
+
+

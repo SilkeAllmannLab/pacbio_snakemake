@@ -53,12 +53,22 @@ CCS = expand(config["working_dir"] + "01_css/{sample}.css.bam", sample=SAMPLES)
 FL = expand(config["working_dir"] + "02_fl/{sample}.fl.bam", sample=SAMPLES)
 FLNC = expand(config["working_dir"] + "03_flnc/{sample}.flnc.bam", sample=SAMPLES)
 TRANSCRIPTS = expand(config["working_dir"] + "04_transcripts/{sample}.transcripts.bam", sample=SAMPLES)
+BAMS = expand(config["result_dir"] + "05_minimap/{sample}.aligned.bam", sample=SAMPLES)
 
-rule all:
-    input:
-        TRANSCRIPTS
-    message:
-        "PacBio IsoSeq Snakemake pipeline successfully run."
+if config["genome"]["map_to_genome"] == True:
+    rule all:
+        input:
+            TRANSCRIPTS, BAMS
+        message:
+            "PacBio IsoSeq Snakemake pipeline successfully run (with genome alignment 'on')."
+elif config["genome"]["map_to_genome"] == False:
+    rule all:
+        input:
+            TRANSCRIPTS
+        message:
+            "PacBio IsoSeq Snakemake pipeline successfully run (genome alignment 'off')."
+else:
+    print("Please choose either 'True' or 'False' for the genome mapping option.")
         
 #######
 # RULES
@@ -134,7 +144,7 @@ rule generate_transcripts_isoforms_using_isoseq:
     input:
         flnc = config["working_dir"] + "03_flnc/{sample}.flnc.bam"
     output:
-        refined_reads = config["working_dir"] + "04_transcripts/{sample}.transcripts.bam"
+        transcripts = config["working_dir"] + "04_transcripts/{sample}.transcripts.bam"
     message:
         "Cluster and generate transcript isoforms for {wildcards.sample} using isoseq3"
     params:
@@ -150,5 +160,42 @@ rule generate_transcripts_isoforms_using_isoseq:
         "{input} "
         "{output} "
 
-# pbmm2 align transcripts.bam reference.fasta aligned.sorted.bam --preset ISOSEQ --sort
+if config["map_to_genome"]:
+    rule generate_genome_index:
+        input:
+            config["genome"]["genome_fasta_ref"]
+        output: 
+            config["working_dir"] + "05_minimap/genome.mmi"
+        conda:
+            "envs/pbmm2.yaml"
+        threads: 20
+        message:
+            "Generate genome index using {input} FASTA file"
+        shell:
+            "pbmm2 index "
+            "--num-threads {threads} "
+            "--preset ISOSEQ "
+            "{input} "
+            "{output}"
+    
+    rule align_reads_to_genome:
+        input:
+            genome_index = config["working_dir"] + "05_minimap/genome.mmi",
+            transcripts = config["working_dir"] + "04_transcripts/{sample}.transcripts.bam" 
+        output:
+            aln = config["result_dir"] + "05_minimap/{sample}.aligned.bam"
+        message:
+            "Align {wildcards.sample} transcripts to genome reference"
+        threads: 20
+        conda:
+            "envs/pbmm2.yaml"
+        shell:
+            "pbmm2 align "
+            "--preset ISOSEQ " 
+            "--sort "
+            "--num-threads {threads} "
+            "{input.genome_index} "
+            "{input.transcripts} "
+            "{output}"
+
 # isoseq3 collapse aligned.sorted.bam out.gff
