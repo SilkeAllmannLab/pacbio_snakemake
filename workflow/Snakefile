@@ -160,7 +160,7 @@ rule generate_transcripts_isoforms_using_isoseq:
         "{input} "
         "{output} "
 
-if config["map_to_genome"]:
+if config["genome"]["map_to_genome"]:
     rule generate_genome_index:
         input:
             config["genome"]["genome_fasta_ref"]
