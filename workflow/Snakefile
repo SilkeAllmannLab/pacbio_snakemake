@@ -241,7 +241,7 @@ if config["genome"]["map_to_genome"] == True:
             "--max-fuzzy-junction {params.max_fuzzy_junction} "
             "{input.aln} "
             "{input.css} "
-            "{output}"
+            "{output.gff}"
     
     rule convert_gff_to_gff:
         input:
