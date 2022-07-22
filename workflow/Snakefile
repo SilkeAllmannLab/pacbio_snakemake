@@ -217,7 +217,7 @@ if config["genome"]["map_to_genome"]:
             "isoseq3 collapse "
             "--min-aln-coverage {params.min_aln_coverage} "
             "--min-aln-identity {params.min_aln_identity} "
-            "--min-fuzzy-junction {params.max_fuzzy_junction} "
+            "--max-fuzzy-junction {params.max_fuzzy_junction} "
             "{input.aln} "
             "{input.css} "
             "{output}"
