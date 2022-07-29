@@ -225,7 +225,7 @@ if config["genome"]["map_to_genome"] == True:
             css = config["working_dir"] + "01_css/{sample}.css.bam"
         output:
             gff = config["working_dir"] + "06_gff/{sample}.collapsed.gff",
-            fasta = config["result_dir"] + "{sample}.collapsed.fasta"  
+            fasta = config["result_dir"] + "06_gff/{sample}.collapsed.fasta"  
         message:
             "Collapse mRNA isoforms of {wildcards.sample} and outputs a GFF and FASTA file"
         conda:
