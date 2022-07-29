@@ -89,7 +89,7 @@ rule generate_circular_consensus_reads:
     params:
         min_accuracy = config["ccs"]["min_accuracy"],
         report_file  = config["working_dir"] + "01_css/{sample}.css_report_txt"
-    threads: 20
+    threads: 30
     conda:
         "envs/pbccs.yaml"
     shell:
@@ -112,7 +112,7 @@ rule generate_full_length_reads:
         barcodes = config["lima"]["barcodes"], # fasta file with adapters (primers + eventual barcodes)
         report_file  = config["working_dir"] + "02_fl/{sample}.lima_report_txt",
         temp_filename = config["working_dir"] + "02_fl/{sample}.fl.bam" # only used for lima to work (renamed after job)
-    threads: 20
+    threads: 30
     shell:
         "lima "
         "--isoseq "
@@ -135,7 +135,7 @@ rule generate_full_length_non_chimeric_reads:
         report_file  = config["working_dir"] + "03_flnc/{sample}.isoseq_refine_report_txt"
     conda: 
         "envs/isoseq3.yaml"
-    threads: 20
+    threads: 30
     shell:
         "isoseq3 refine "
         "--require-polya "
@@ -156,7 +156,7 @@ rule generate_transcripts_isoforms_using_isoseq:
         report_file  = config["working_dir"] + "04_transcripts/{sample}.isoseq_cluster_report_txt"
     conda: 
         "envs/isoseq3.yaml"
-    threads: 20
+    threads: 30
     shell:
         "isoseq3 cluster "
         "--num-threads {threads} "
@@ -189,7 +189,7 @@ if config["genome"]["map_to_genome"] == True:
             config["working_dir"] + "05_minimap/genome.mmi"
         conda:
             "envs/pbmm2.yaml"
-        threads: 20
+        threads: 30
         message:
             "Generate genome index using {input} FASTA file"
         shell:
@@ -207,7 +207,7 @@ if config["genome"]["map_to_genome"] == True:
             aln = config["working_dir"] + "05_minimap/{sample}.aligned.sorted.bam"
         message:
             "Align {wildcards.sample} transcripts to genome reference"
-        threads: 20
+        threads: 30
         conda:
             "envs/pbmm2.yaml"
         shell:
