@@ -225,7 +225,7 @@ if config["genome"]["map_to_genome"] == True:
             css = config["working_dir"] + "01_css/{sample}.css.bam"
         output:
             gff = config["working_dir"] + "06_gff/{sample}.collapsed.gff",
-            fasta = config["result_dir"] + "{sample}.collapsed.fasta"  
+            fasta = config["result_dir"] + "06_gff/{sample}.collapsed.fasta"  
         message:
             "Collapse mRNA isoforms of {wildcards.sample} and outputs a GFF and FASTA file"
         conda:
@@ -233,7 +233,8 @@ if config["genome"]["map_to_genome"] == True:
         params:
             min_aln_coverage = config["isoseq3"]["collapse"]["min_aln_coverage"],
             min_aln_identity = config["isoseq3"]["collapse"]["min_aln_identity"],
-            max_fuzzy_junction = config["isoseq3"]["collapse"]["max_fuzzy_junction"]
+            max_fuzzy_junction = config["isoseq3"]["collapse"]["max_fuzzy_junction"],
+            fasta = config["result_dir"] + "{sample}.collapsed.fasta"
         shell:
             "isoseq3 collapse "
             "--min-aln-coverage {params.min_aln_coverage} "
@@ -241,7 +242,8 @@ if config["genome"]["map_to_genome"] == True:
             "--max-fuzzy-junction {params.max_fuzzy_junction} "
             "{input.aln} "
             "{input.css} "
-            "{output.gff}"
+            "{output.gff};"
+            "mv {output.fasta} {params.fasta} "
     
     rule convert_gff_to_gff:
         input:
